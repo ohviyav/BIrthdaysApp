@@ -17,18 +17,24 @@ struct ContentView: View {
     @State private var newName = ""
     @State private var newBirthday = Date.now
     
+    
     var body: some View {
         NavigationStack {
-        //id tells the computer that each string taken in belongs to one person
-        //friend in builds a row as each person. stacks on top of eachother
-        List(friends, id: \.name) { friend in
-            HStack {
-                Text(friend.name)
-                Spacer()
-                Text(friend.birthday, format: .dateTime.month(.wide).day().year())
+            List {
+                ForEach(friends, id: \.name) { friend in
+                    HStack {
+                        Text(friend.name)
+                        Spacer()
+                        Text(friend.birthday, format: .dateTime.month(.wide).day().year())
+                    }
+                }
+                .onDelete { indexSet in
+                    for index in indexSet {
+                        let friendToDelete = friends[index]
+                        modelContext.delete(friendToDelete)
+                    }
+                }
             }
-            
-        }
         .navigationTitle("my awesome bday app")
         .safeAreaInset(edge: .bottom) {
             VStack(alignment: .center, spacing: 20) {
